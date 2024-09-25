@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>To-Do App</title>
+    <style>
+        body {
+            background-color: grey;
+        }
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 75px;
+            display: flex;
+            justify-content: space-between;
+        }
+        h1 {
+            font-size: 48px;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: grey;
+        }
+        .task-buttons {
+            margin-left: 15px;
+        }
+        .task-column {
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="task-column">
+            <h1>TO-DO LIST:</h1>
+            <input type="text" id="taskInput" placeholder="Add a new task" style="font-size: 16px;">
+            <input type="datetime-local" id="taskDate" style="font-size: 16px;">
+            <button id="addTaskBtn" style="font-size: 16px;">Add Task</button>
+            <ul id="taskList"></ul>
+        </div>
+        <div class="task-column">
+            <h1>COMPLETED TASKS:</h1>
+            <ul id="completedTasksList"></ul>
+        </div>
+    </div>
+    <script>
+        document.getElementById('addTaskBtn').addEventListener('click', addTask);
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskDate = document.getElementById('taskDate');
+            const taskList = document.getElementById('taskList');
+
+            if (taskInput.value === '') {
+                alert('Please enter a task');
+                return;
+            }
+
+            const taskItem = document.createElement('li');
+            taskItem.innerHTML = `
+                <span>${taskInput.value} - ${new Date(taskDate.value).toLocaleString()}</span>
+                <button onclick="completeTask(this)" class="task-buttons">✔️</button>
+                <button onclick="removeTask(this)" class="task-buttons">❌</button>
+            `;
+            taskItem.dataset.taskName = taskInput.value; // Store the task name for later use
+            taskList.appendChild(taskItem);
+
+            // Clear input fields
+            taskInput.value = '';
+            taskDate.value = '';
+        }
+
+        function completeTask(button) {
+            const taskItem = button.parentElement;
+            const completedTasksList = document.getElementById('completedTasksList');
+
+            // Create a new list item for completed tasks
+            const completedTaskItem = document.createElement('li');
+            completedTaskItem.innerHTML = `
+                <span>${taskItem.dataset.taskName} - Completed</span>
+                <button onclick="removeTask(this)" class="task-buttons">❌</button>
+            `;
+
+            if (!taskItem.classList.contains('completed')) {
+                completedTasksList.appendChild(completedTaskItem);
+                taskItem.classList.add('completed'); // Mark as completed
+                taskItem.remove(); // Remove from active list
+            }
+        }
+
+        function removeTask(button) {
+            const taskItem = button.parentElement;
+            taskItem.remove();
+        }
+    </script>
+</body>
+</html>
